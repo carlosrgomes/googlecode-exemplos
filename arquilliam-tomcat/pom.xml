@@ -1,0 +1,171 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>br.com.exemplo.arquillian.tomcat</groupId>
+	<artifactId>arquilliam-tomcat</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<name>arquilliam-tomcat</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<version.org.apache.tomcat>7.0.20</version.org.apache.tomcat>
+		<version.arquillian_core>1.0.0.Final</version.arquillian_core>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<tomcat.home>${project.build.directory}/apache-tomcat-${version.org.apache.tomcat}</tomcat.home>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- org.jboss.arquillian -->
+		<dependency>
+			<groupId>org.jboss.arquillian</groupId>
+			<artifactId>arquillian-bom</artifactId>
+			<version>${version.arquillian_core}</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-container-spi</artifactId>
+			<version>${version.arquillian_core}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-container-test-spi</artifactId>
+			<version>${version.arquillian_core}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.protocol</groupId>
+			<artifactId>arquillian-protocol-servlet</artifactId>
+			<version>${version.arquillian_core}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.testenricher</groupId>
+			<artifactId>arquillian-testenricher-cdi</artifactId>
+			<version>${version.arquillian_core}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.testenricher</groupId>
+			<artifactId>arquillian-testenricher-resource</artifactId>
+			<version>${version.arquillian_core}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.testenricher</groupId>
+			<artifactId>arquillian-testenricher-initialcontext</artifactId>
+			<version>${version.arquillian_core}</version>
+		</dependency>
+		<!-- testing -->
+		<dependency>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<version>${version.arquillian_core}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+			<version>1.0.0-beta-6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.descriptors</groupId>
+			<artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
+			<version>2.0.0-alpha-2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-tomcat-managed-7</artifactId>
+			<version>1.0.0.CR4</version>
+			<scope>test</scope>
+		</dependency>
+
+
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>generate-test-resources</phase>
+						<configuration>
+							<tasks>
+								<mkdir dir="${project.build.directory}/downloads" />
+								<get
+									src="http://archive.apache.org/dist/tomcat/tomcat-7/v${version.org.apache.tomcat}/bin/apache-tomcat-${version.org.apache.tomcat}.zip"
+									dest="${project.build.directory}/downloads" verbose="true"
+									skipexisting="true" />
+								<unzip
+									src="${project.build.directory}/downloads/apache-tomcat-${version.org.apache.tomcat}.zip"
+									dest="${project.build.directory}" />
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${tomcat.home}/conf</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/test/resources/container</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<environmentVariables>
+						<CATALINA_HOME>${tomcat.home}</CATALINA_HOME>
+						<CERTIFICADO>sr/test/resources/</CERTIFICADO>
+					</environmentVariables>
+					<!-- Workaround for SHRINKDESC-97 until it is fixed. -->
+					<argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

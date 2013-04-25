@@ -12,7 +12,7 @@
 
 	<properties>
 		<version.org.apache.tomcat>7.0.20</version.org.apache.tomcat>
-		<version.arquillian_core>1.0.0.Final</version.arquillian_core>
+		<version.arquillian_core>1.0.3.Final</version.arquillian_core>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tomcat.home>${project.build.directory}/apache-tomcat-${version.org.apache.tomcat}</tomcat.home>
 		<certificado.home>${basedir}/src/test/resources/container/teste.keystore</certificado.home>
@@ -86,7 +86,7 @@
 		<dependency>
 			<groupId>org.jboss.shrinkwrap.resolver</groupId>
 			<artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-			<version>1.0.0-beta-6</version>
+			<version>2.0.0-beta-3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -101,6 +101,68 @@
 			<artifactId>arquillian-tomcat-managed-7</artifactId>
 			<version>1.0.0.CR4</version>
 			<scope>test</scope>
+		</dependency>
+
+
+		<!-- Jersey -->
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>1.8</version>
+		</dependency>
+		
+		<dependency>
+		<groupId>com.sun.jersey</groupId>
+		<artifactId>jersey-client</artifactId>
+		<version>1.8</version>
+	</dependency>
+
+		<!-- Spring 3 dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
+
+		<!-- Jersey + Spring -->
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-spring</artifactId>
+			<version>1.8</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 
@@ -119,15 +181,13 @@
 						<configuration>
 							<tasks>
 								<mkdir dir="${project.build.directory}/downloads" />
-								<get
+								<!-- <get
 									src="http://archive.apache.org/dist/tomcat/tomcat-7/v${version.org.apache.tomcat}/bin/apache-tomcat-${version.org.apache.tomcat}.zip"
 									dest="${project.build.directory}/downloads" verbose="true"
-									skipexisting="true" />
+									skipexisting="true" />  -->
 								<unzip
-									src="${project.build.directory}/downloads/apache-tomcat-${version.org.apache.tomcat}.zip"
+									src="${basedir}/src/test/resources/apache-tomcat-${version.org.apache.tomcat}.zip"
 									dest="${project.build.directory}" />
-
-
 
 							</tasks>
 						</configuration>
@@ -152,7 +212,7 @@
 							<resources>
 								<resource>
 									<directory>${basedir}/src/test/resources/container</directory>
-									 <filtering>true</filtering>
+									<filtering>true</filtering>
 								</resource>
 							</resources>
 						</configuration>

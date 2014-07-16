@@ -20,7 +20,7 @@ public class TestValidation {
 		Pessoa pessoa = new Pessoa();
 		pessoa.setNome("Carlos");
 		pessoa.setAno(1000);
-		pessoa.setMes(13);
+		pessoa.setMes(-1);
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         Set<ConstraintViolation<Pessoa>> constraintViolations = validator

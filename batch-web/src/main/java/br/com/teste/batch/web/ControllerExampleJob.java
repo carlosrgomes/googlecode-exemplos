@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("run")
-public class ControllerExampleJob {
+public class ControllerExampleJob    {
 	
 	@Autowired
 	private JobLauncher jobLauncher;

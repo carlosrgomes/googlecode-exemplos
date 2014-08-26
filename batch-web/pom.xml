@@ -4,7 +4,7 @@
 
 	<groupId>br.com.teste.batch.web</groupId>
 	<artifactId>batch-web</artifactId>
-	<packaging>war</packaging >
+	<packaging>war</packaging  >
 	<version>0.0.1-SNAPSHOT</version>
     
 	<name>batch-web</name>
